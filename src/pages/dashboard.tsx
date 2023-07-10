@@ -16,14 +16,30 @@ export default function Dashboard() {
     spotifyApi.setAccessToken(accessToken);
 
     spotifyApi.getUserPlaylists().then((response) => {
-      setPlaylists(response.body.items);
+      const playlists = response.body.items;
+      Promise.all(
+        playlists.map((playlist) =>
+          spotifyApi.getPlaylistTracks(playlist.id).then((response) => ({
+            ...playlist,
+            tracks: response.body.items,
+          }))
+        )
+      ).then(setPlaylists);
     });
   }, [accessToken]);
 
   return (
     <div>
       {playlists.map((playlist) => (
-        <div key={playlist.id}>{playlist.name}</div>
+        <div key={playlist.id}>
+          <h2>{playlist.name}</h2>
+          <img src={playlist.images[0].url} alt={playlist.name} />
+          <ol>
+            {playlist.tracks.map((track) => (
+              <li key={track.id}>{track.track.name}</li>
+            ))}
+          </ol>
+        </div>
       ))}
     </div>
   );
