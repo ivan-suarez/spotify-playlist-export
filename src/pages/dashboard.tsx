@@ -4,6 +4,7 @@ import SpotifyWebApi from 'spotify-web-api-node';
 export default function Dashboard() {
   const [playlists, setPlaylists] = useState([]);
   const [accessToken, setAccessToken] = useState(null);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const spotifyApi = new SpotifyWebApi();
 
   useEffect(() => {
@@ -28,19 +29,29 @@ export default function Dashboard() {
     });
   }, [accessToken]);
 
+  const handlePlaylistClick = (playlist) => {
+    setSelectedPlaylist(playlist);
+    //<img src={playlist.images[0].url} alt={playlist.name} />
+  };
+
   return (
     <div>
       {playlists.map((playlist) => (
-        <div key={playlist.id}>
+        <div key={playlist.id} onClick={()=>handlePlaylistClick(playlist)}>
           <h2>{playlist.name}</h2>
-          <img src={playlist.images[0].url} alt={playlist.name} />
-          <ol>
-            {playlist.tracks.map((track) => (
-              <li key={track.id}>{track.track.name}</li>
-            ))}
-          </ol>
+          
+          
         </div>
       ))}
+     {selectedPlaylist && (
+      <div>
+        <ol>
+          {selectedPlaylist.tracks.map((track) => (
+              <li key={track.id}>{track.track.name}</li>
+            ))}
+        </ol>
+      </div>
+     )} 
     </div>
   );
 }
