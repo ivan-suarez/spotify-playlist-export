@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SpotifyWebApi from 'spotify-web-api-node';
+import Modal from '../components/Modal'
 
 export default function Dashboard() {
   const [playlists, setPlaylists] = useState([]);
@@ -34,6 +35,10 @@ export default function Dashboard() {
     //<img src={playlist.images[0].url} alt={playlist.name} />
   };
 
+  const closeModal = () => {
+    setSelectedPlaylist(null);
+  };
+
   return (
     <div>
       {playlists.map((playlist) => (
@@ -44,14 +49,15 @@ export default function Dashboard() {
         </div>
       ))}
      {selectedPlaylist && (
-      <div>
-        <ol>
-          {selectedPlaylist.tracks.map((track) => (
+        <Modal onClose={closeModal}>
+          <h2>{selectedPlaylist.name}</h2>
+          <ol>
+            {selectedPlaylist.tracks.map((track) => (
               <li key={track.id}>{track.track.name}</li>
             ))}
-        </ol>
-      </div>
-     )} 
+          </ol>
+        </Modal>
+      )}
     </div>
   );
 }
