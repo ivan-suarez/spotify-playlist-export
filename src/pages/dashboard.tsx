@@ -54,10 +54,34 @@ export default function Dashboard() {
   
     URL.revokeObjectURL(url);
   }
+
+  
+  function downloadAllPlaylists(playlists) {
+
+    if (typeof window === 'undefined') return;
+    const allPlaylistData = playlists.map(playlist => {
+      const playlistData = playlist.tracks
+        .map((track) => `${track.track.name} by ${track.track.artists.map(artist => artist.name).join(', ')}`)
+        .join('\n');
+  
+      return `Playlist: ${playlist.name}\nTracks:\n${playlistData}`;
+    }).join('\n\n');
+  
+    const blob = new Blob([allPlaylistData], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement('a');
+    link.download = `All_Playlists.txt`;
+    link.href = url;
+    link.click();
+  
+    URL.revokeObjectURL(url);
+  }
   
 
   return (
     <div>
+      <button onClick={()=>downloadAllPlaylists(playlists)}>Download everything</button>
       {playlists.map((playlist) => (
         <div key={playlist.id} onClick={()=>handlePlaylistClick(playlist)}>
           <h2>{playlist.name}</h2>
