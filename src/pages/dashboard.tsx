@@ -39,6 +39,23 @@ export default function Dashboard() {
     setSelectedPlaylist(null);
   };
 
+  function downloadPlaylist(playlist) {
+    const playlistData = playlist.tracks
+      .map((track) => `${track.track.name} by ${track.track.artists.map(artist => artist.name).join(', ')}`)
+      .join('\n');
+  
+    const blob = new Blob([playlistData], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement('a');
+    link.download = `${playlist.name}.txt`;
+    link.href = url;
+    link.click();
+  
+    URL.revokeObjectURL(url);
+  }
+  
+
   return (
     <div>
       {playlists.map((playlist) => (
@@ -49,15 +66,8 @@ export default function Dashboard() {
         </div>
       ))}
      {selectedPlaylist && (
-        <Modal onClose={closeModal}>
-          <h2>{selectedPlaylist.name}</h2>
-          <ol>
-            {selectedPlaylist.tracks.map((track) => (
-              <li key={track.id}>{track.track.name}</li>
-            ))}
-          </ol>
-        </Modal>
-      )}
+  <Modal onClose={closeModal} playlist={selectedPlaylist} onDownload={() => downloadPlaylist(selectedPlaylist)} />
+)}
     </div>
   );
 }

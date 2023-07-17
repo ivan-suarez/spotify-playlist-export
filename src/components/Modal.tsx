@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const Modal = ({ children, onClose }) => {
+const Modal = ({ children, onClose, playlist, onDownload }) => {
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -38,7 +38,13 @@ const Modal = ({ children, onClose }) => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {children}
+        <h2>{playlist.name}</h2>
+        <button onClick={onDownload}>Download Playlist</button>
+        <ol>
+          {playlist.tracks.map((track) => (
+            <li key={track.id}>{track.track.name}</li>
+          ))}
+        </ol>
         <button style={{ position: 'absolute', top: 10, right: 10 }} onClick={onClose}>X</button>
       </div>
     </div>
