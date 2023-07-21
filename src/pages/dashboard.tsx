@@ -80,18 +80,21 @@ export default function Dashboard() {
   
 
   return (
-    <div>
-      <button onClick={()=>downloadAllPlaylists(playlists)}>Download everything</button>
-      {playlists.map((playlist) => (
-        <div key={playlist.id} onClick={()=>handlePlaylistClick(playlist)}>
-          <h2>{playlist.name}</h2>
-          
-          
+    <div className="min-h-screen bg-black py-6 flex flex-col justify-center sm:py-12">
+      <div className="relative py-3 sm:py-6 px-5 sm:px-6 mx-auto max-w-6xl">
+        <button className="px-4 py-2 mb-4 text-black bg-green-600 rounded hover:bg-green-700 focus:outline-none" onClick={()=>downloadAllPlaylists(playlists)}>Download everything</button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {playlists.map((playlist) => (
+            <div key={playlist.id} className="shadow w-full bg-gray-800 rounded-md px-4 py-4 sm:px-6 cursor-pointer hover:bg-gray-700" onClick={()=>handlePlaylistClick(playlist)}>
+              <img className="w-full h-48 object-cover mb-4 rounded-md" src={playlist.images[0]?.url} alt={playlist.name} />
+              <h2 className="text-xl leading-6 font-inter text-white">{playlist.name}</h2>
+            </div>
+          ))}
         </div>
-      ))}
-     {selectedPlaylist && (
-  <Modal onClose={closeModal} playlist={selectedPlaylist} onDownload={() => downloadPlaylist(selectedPlaylist)} />
-)}
+        {selectedPlaylist && (
+          <Modal onClose={closeModal} playlist={selectedPlaylist} onDownload={() => downloadPlaylist(selectedPlaylist)} />
+        )}
+      </div>
     </div>
   );
 }
