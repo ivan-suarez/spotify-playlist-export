@@ -39,50 +39,69 @@ export default function Dashboard() {
     setSelectedPlaylist(null);
   };
 
-  function downloadPlaylist(playlist) {
-    const playlistData = playlist.tracks
-      .map((track) => `${track.track.name} by ${track.track.artists.map(artist => artist.name).join(', ')}`)
-      .join('\n');
-  
-    const blob = new Blob([playlistData], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-  
-    const link = document.createElement('a');
-    link.download = `${playlist.name}.txt`;
-    link.href = url;
-    link.click();
-  
-    URL.revokeObjectURL(url);
-  }
-
-  
-  function downloadAllPlaylists(playlists) {
-
-    if (typeof window === 'undefined') return;
-    const allPlaylistData = playlists.map(playlist => {
-      const playlistData = playlist.tracks
+  function downloadPlaylist(playlist, format = 'txt') {
+    let playlistData;
+    if (format === 'csv') {
+      playlistData = playlist.tracks
+        .map((track) => `"${track.track.name}", "${track.track.artists.map(artist => artist.name).join(', ')}"`)
+        .join('\n');
+    } else {
+      playlistData = playlist.tracks
         .map((track) => `${track.track.name} by ${track.track.artists.map(artist => artist.name).join(', ')}`)
         .join('\n');
+    }
   
-      return `Playlist: ${playlist.name}\nTracks:\n${playlistData}`;
-    }).join('\n\n');
-  
-    const blob = new Blob([allPlaylistData], { type: 'text/plain' });
+    const blob = new Blob([playlistData], { type: format === 'csv' ? 'text/csv' : 'text/plain' });
     const url = URL.createObjectURL(blob);
   
     const link = document.createElement('a');
-    link.download = `All_Playlists.txt`;
+    link.download = `${playlist.name}.${format}`;
     link.href = url;
     link.click();
   
     URL.revokeObjectURL(url);
   }
+  
+  function downloadAllPlaylists(playlists, format = 'txt') {
+    if (typeof window === 'undefined') return;
+    
+    let allPlaylistData;
+    if (format === 'csv') {
+      allPlaylistData = playlists.map(playlist => {
+        const playlistData = playlist.tracks
+          .map((track) => `"${playlist.name}", "${track.track.name}", "${track.track.artists.map(artist => artist.name).join(', ')}"`)
+          .join('\n');
+    
+        return playlistData;
+      }).join('\n');
+    } else {
+      allPlaylistData = playlists.map(playlist => {
+        const playlistData = playlist.tracks
+          .map((track) => `${track.track.name} by ${track.track.artists.map(artist => artist.name).join(', ')}`)
+          .join('\n');
+    
+        return `Playlist: ${playlist.name}\nTracks:\n${playlistData}`;
+      }).join('\n\n');
+    }
+  
+    const blob = new Blob([allPlaylistData], { type: format === 'csv' ? 'text/csv' : 'text/plain' });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement('a');
+    link.download = `All_Playlists.${format}`;
+    link.href = url;
+    link.click();
+  
+    URL.revokeObjectURL(url);
+  }
+  
   
 
   return (
     <div className="min-h-screen bg-black py-6 flex flex-col justify-center sm:py-12">
       <div className="relative py-3 sm:py-6 px-5 sm:px-6 mx-auto max-w-6xl">
-        <button className="px-4 py-2 mb-4 text-black bg-green-600 rounded hover:bg-green-700 focus:outline-none" onClick={()=>downloadAllPlaylists(playlists)}>Download everything</button>
+        <button className="px-4 py-2 mb-4 text-black bg-green-600 rounded hover:bg-green-700 focus:outline-none" onClick={()=>downloadAllPlaylists(playlists, 'txt')}>Export to txt</button>
+        <button className="px-4 py-2 mb-4 text-black bg-green-600 rounded hover:bg-green-700 focus:outline-none" onClick={()=>downloadAllPlaylists(playlists, 'csv')}>Export to csv</button>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {playlists.map((playlist) => (
             <div key={playlist.id} className="shadow w-full bg-gray-800 rounded-md px-4 py-4 sm:px-6 cursor-pointer hover:bg-gray-700" onClick={()=>handlePlaylistClick(playlist)}>
@@ -92,7 +111,7 @@ export default function Dashboard() {
           ))}
         </div>
         {selectedPlaylist && (
-          <Modal onClose={closeModal} playlist={selectedPlaylist} onDownload={() => downloadPlaylist(selectedPlaylist)} />
+          <Modal onClose={closeModal} playlist={selectedPlaylist} onDownload={(format) => downloadPlaylist(selectedPlaylist, format)} />
         )}
       </div>
     </div>

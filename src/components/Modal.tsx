@@ -1,8 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, ReactNode, FunctionComponent } from 'react';
 
-const Modal = ({ children, onClose, playlist, onDownload }) => {
+
+interface Track {
+  id: string;
+  track: {
+    name: string;
+  };
+}
+
+interface Playlist {
+  name: string;
+  tracks: Track[];
+}
+
+interface ModalProps {
+  children?: ReactNode;
+  onClose: () => void;
+  playlist: Playlist;
+  onDownload: (format: string) => void;
+}
+
+const Modal: FunctionComponent<ModalProps> = ({ onClose, playlist, onDownload })  => {
   useEffect(() => {
-    const handleEscape = (e) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
       }
@@ -25,7 +45,8 @@ const Modal = ({ children, onClose, playlist, onDownload }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-3xl font-bold mb-4">{playlist.name}</h2>
-        <button className="px-4 py-2 rounded text-black bg-green-600 hover:bg-green-500 mb-4" onClick={onDownload}>Download Playlist</button>
+        <button className="px-4 py-2 rounded text-black bg-green-600 hover:bg-green-500 mb-4" onClick={() => onDownload('txt')}>Download as TXT</button>
+        <button className="px-4 py-2 rounded text-black bg-green-600 hover:bg-green-500 mb-4" onClick={() => onDownload('csv')}>Download as CSV</button>
         <ol className="list-decimal list-inside">
           {playlist.tracks.map((track) => (
             <li key={track.id} className="my-1">{track.track.name}</li>

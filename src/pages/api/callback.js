@@ -1,5 +1,3 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
 import SpotifyWebApi from 'spotify-web-api-node';
 
 export default async function handler(req, res) {
