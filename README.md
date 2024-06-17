@@ -1,10 +1,11 @@
-#Spotify Playlist Exporter
+# Spotify Playlist Exporter
+
+
 
 ![Alt text](screenshot.png?)
 
+A webapp to export spotify playlists into txt or csv format. Built using Next.js.
 
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
